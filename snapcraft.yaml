@@ -20,6 +20,25 @@ parts:
         wget -c http://releases.llvm.org/3.8.0/clang+llvm-3.8.0-aarch64-linux-gnu.tar.xz
         tar -xf clang+llvm-3.8.0-aarch64-linux-gnu.tar.xz -C $SNAPCRAFT_STAGE
     build-packages: [wget]
+  openssl:
+    source: https://github.com/openssl/openssl.git
+    source-type: git
+    source-tag: OpenSSL_1_1_0g
+    plugin: make
+    build: |
+      ./Configure --prefix=/usr --openssldir=/etc/ssl --libdir=lib ${OPENSSL_FLAGS} linux-generic64
+      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT depend
+      sudo make install_sw
+  icu:
+    after: [openssl]
+    source-type: svn
+    source: http://source.icu-project.org/repos/icu/tags/release-55-1
+    plugin: make
+    build: |
+      cd icu4c/source
+      ./configure --prefix=/usr --enable-static --disable-shared
+      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
+      sudo make install
   phantomjs:
     after: [clang]
     plugin: python
@@ -31,36 +50,12 @@ parts:
         git submodule update
     build: |
         cd src
-        export PHANTOMJSDIR=$(pwd)
-
-        # prepare apt to download sources
-        # sudo sed -i~orig -e 's/# deb-src/deb-src/' /etc/apt/sources.list
-        # sudo apt-get update
-
-        # download and install openssl
-        # apt-get source openssl
-        # cd openssl-1.0.*
-        # ./Configure --prefix=/usr --openssldir=/etc/ssl --libdir=lib ${OPENSSL_FLAGS} linux-generic64
-        # make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT depend
-        # make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-        # sudo make install_sw
-
-        # download and install icu
-        # cd $PHANTOMJSDIR
-        # apt-get source icu
-        # cd icu-5*/source
-        # ./configure --prefix=/usr --enable-static --disable-shared
-        # make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-        # sudo make install
-
-        # build phantomjs now
         export CLANG_DIR=$SNAPCRAFT_STAGE/clang+llvm-3.8.0-aarch64-linux-gnu/bin/
-        cd $PHANTOMJSDIR
         export CC=$CLANG_DIR/clang
         export CXX=$CLANG_DIR/clang++
         python build.py  --confirm --release --qt-config="-no-pkg-config" --git-clean-qtbase --git-clean-qtwebkit
         mkdir -p $SNAPCRAFT_PART_INSTALL/bin
-        cp $PHANTOMJSDIR/bin/phantomjs $SNAPCRAFT_PART_INSTALL/bin/phantomjs
+        cp bin/phantomjs $SNAPCRAFT_PART_INSTALL/bin/phantomjs
     stage-packages:
       - build-essential
       - g++
@@ -79,5 +74,3 @@ parts:
       - python
       - libx11-dev
       - libxext-dev
-      - openssl
-      - icu
