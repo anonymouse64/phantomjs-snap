@@ -1,4 +1,4 @@
-name: phantomjs-ijohnson
+name: phantomjs
 version: 2.1.1
 summary: PhantomJS (phantomjs.org) is a headless WebKit scriptable with JavaScript
 description: |
@@ -8,47 +8,45 @@ confinement: strict
 grade: stable
 
 apps:
-  phantomjs-ijohnson:
-    command: 'bin/phantomjs'
+  phantomjs:
+    command: bin/phantomjs
     plugs: [network-bind, network]
 
 parts:
   clang:
     plugin: nil
-    build: |
-        set -e
-        wget -c http://releases.llvm.org/3.8.0/clang+llvm-3.8.0-armv7a-linux-gnueabihf.tar.xz
-        tar -xf clang+llvm-3.8.0-armv7a-linux-gnueabihf.tar.xz -C $SNAPCRAFT_STAGE
-    build-packages: [wget]
+    source: http://releases.llvm.org/3.8.0/clang+llvm-3.8.0-armv7a-linux-gnueabihf.tar.xz
+    stage: ["*"]
+    prime: ["-*"]
   openssl:
     source: https://github.com/openssl/openssl.git
     source-type: git
     source-tag: OpenSSL_1_1_0g
     plugin: make
+    make-parameters: depend
     build: |
       ./Configure --prefix=/usr --openssldir=/etc/ssl --libdir=lib ${OPENSSL_FLAGS} linux-generic64
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT depend
+      snapcraftl build
       sudo make install_sw
   icu:
     after: [openssl]
     source-type: svn
     source: http://source.icu-project.org/repos/icu/tags/release-55-1
     plugin: make
-    build: |
+    source-subdir: icu4c/source
+    override-build: |
       cd icu4c/source
       ./configure --prefix=/usr --enable-static --disable-shared
-      make -j$SNAPCRAFT_PARALLEL_BUILD_COUNT
-      sudo make install
+      snapcraftctl build
   phantomjs:
-    after: [clang]
+    after: [clang, icu]
     plugin: python
     source: https://github.com/ariya/phantomjs.git
     source-type: git
     source-tag: 2.1.1
-    prepare: |
+    override-build: |
         git submodule init
         git submodule update
-    build: |
         export CLANG_DIR=$SNAPCRAFT_STAGE/clang+llvm-3.8.0-armv7a-linux-gnueabihf/bin
         export CC=$CLANG_DIR/clang
         export CXX=$CLANG_DIR/clang++
