@@ -26,7 +26,7 @@ parts:
     make-parameters: [depend]
     build: |
       ./Configure --prefix=/usr --openssldir=/etc/ssl --libdir=lib ${OPENSSL_FLAGS} linux-generic64
-      snapcraftl build
+      snapcraftctl build
       sudo make install_sw
   icu:
     after: [openssl]
