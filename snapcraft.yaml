@@ -23,7 +23,7 @@ parts:
     source-type: git
     source-tag: OpenSSL_1_1_0g
     plugin: make
-    make-parameters: depend
+    make-parameters: [depend]
     build: |
       ./Configure --prefix=/usr --openssldir=/etc/ssl --libdir=lib ${OPENSSL_FLAGS} linux-generic64
       snapcraftl build
