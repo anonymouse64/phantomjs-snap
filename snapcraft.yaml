@@ -28,18 +28,18 @@ parts:
       ./Configure --prefix=/usr --openssldir=/etc/ssl --libdir=lib ${OPENSSL_FLAGS} linux-generic64
       snapcraftctl build
       sudo make install_sw
-  icu:
-    after: [openssl]
-    source-type: svn
-    source: http://source.icu-project.org/repos/icu/tags/release-55-1
-    plugin: make
-    source-subdir: icu4c/source
-    override-build: |
-      cd icu4c/source
-      ./configure --prefix=/usr --enable-static --disable-shared
-      snapcraftctl build
+  # icu:
+  #   after: [openssl]
+  #   source-type: svn
+  #   source: http://source.icu-project.org/repos/icu/tags/release-55-1
+  #   plugin: make
+  #   source-subdir: icu4c/source
+  #   override-build: |
+  #     cd icu4c/source
+  #     ./configure --prefix=/usr --enable-static --disable-shared
+  #     snapcraftctl build
   phantomjs:
-    after: [clang, icu]
+    after: [clang]
     plugin: python
     source: https://github.com/ariya/phantomjs.git
     source-type: git
