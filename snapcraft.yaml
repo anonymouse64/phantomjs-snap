@@ -15,7 +15,19 @@ apps:
 parts:
   clang:
     plugin: nil
-    source: http://releases.llvm.org/3.8.0/clang+llvm-3.8.0-armv7a-linux-gnueabihf.tar.xz
+    source: 
+      - on armhf: http://releases.llvm.org/3.8.0/clang+llvm-3.8.0-armv7a-linux-gnueabihf.tar.xz
+      - else:
+        - on amd64: http://releases.llvm.org/3.8.0/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz
+      - else:
+        - on arm64: http://releases.llvm.org/3.8.0/clang+llvm-3.8.0-aarch64-linux-gnu.tar.xz
+      - else fail
+    stage:
+      - bin/*
+      - include/*
+      - lib/*
+      - libexec/*
+      - share/*
     prime: ["-*"]
   openssl:
     source: https://github.com/openssl/openssl.git
