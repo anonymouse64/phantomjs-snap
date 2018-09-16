@@ -7,6 +7,14 @@ description: |
 confinement: strict
 grade: stable
 
+architectures:
+  - build-on: amd64
+    run-on: amd64
+  - build-on: arm64
+    run-on: arm64
+  - build-on: armhf
+    run-on: armhf
+
 apps:
   phantomjs:
     command: bin/phantomjs
