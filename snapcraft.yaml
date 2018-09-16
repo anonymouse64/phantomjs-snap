@@ -47,7 +47,7 @@ parts:
     override-build: |
         git submodule init
         git submodule update
-        find /build -name clang++ 2>&/dev/null
+        find /build -name clang++
         ls -lah $SNAPCRAFT_STAGE
         export CLANG_DIR=$SNAPCRAFT_STAGE/clang+llvm-3.8.0-armv7a-linux-gnueabihf/bin
         export CC=$CLANG_DIR/clang
