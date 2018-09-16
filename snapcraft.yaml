@@ -46,7 +46,7 @@ parts:
     override-build: |
         git submodule init
         git submodule update
-        find /build -name clang++
+        echo "$SNAPCRAFT_STAGE contains:"
         ls -lah $SNAPCRAFT_STAGE
         export CLANG_DIR=$SNAPCRAFT_STAGE/bin
         export CC=$CLANG_DIR/clang
