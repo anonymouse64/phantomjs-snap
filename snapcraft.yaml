@@ -53,7 +53,7 @@ parts:
         python build.py  --confirm --release --qt-config="-no-pkg-config" --git-clean-qtbase --git-clean-qtwebkit
         mkdir -p $SNAPCRAFT_PART_INSTALL/bin
         cp bin/phantomjs $SNAPCRAFT_PART_INSTALL/bin/phantomjs
-    stage-packages:
+    build-packages:
       - build-essential
       - g++
       - flex
