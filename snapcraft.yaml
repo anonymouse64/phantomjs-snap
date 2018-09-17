@@ -30,12 +30,7 @@ parts:
       - else:
         - on arm64: http://releases.llvm.org/3.8.0/clang+llvm-3.8.0-aarch64-linux-gnu.tar.xz
       - else fail
-    stage:
-      - bin/*
-      - include/*
-      - lib/*
-      - libexec/*
-      - share/*
+    stage: ["*"]
     prime: ["-*"]
   openssl:
     source: https://github.com/openssl/openssl.git
